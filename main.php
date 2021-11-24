@@ -1,48 +1,32 @@
-<?php 
-require "connection.php";
-?>
-<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>Project</title>
-  <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+	<meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 
-<div class="container">
-<div class="col-lg-5">
-  <h2>Registeration Form</h2>
-  <form action="" name="form1" method="post">
-    <div class="form-group">
-      <label for="text">Stundent Id: </label>
-      <input type="text" class="form-control" id="studentnum" placeholder="Enter Student Id" name="studentnum">
-    </div>
-    <div class="form-group">
-      <label for="fullname">Fullname:</label>
-      <input type="text" class="form-control" id="fullname" placeholder="Enter Fullname" name="fullname">
-    </div>
-    <div class="form-group">
-      <label for="birthday">Birthday:</label>
-      <input type="date" class="form-control" id="birthday" placeholder="Enter Birthday" name="birthday">
-    </div>
-	<div class="form-group">
-      <label for="course">Course:</label>
-      <input type="text" class="form-control" id="course" placeholder="Enter Course" name="course">
-    </div>
-	<div class="form-group">
-      <label for="email">Email:</label>
-      <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email">
-    </div>
-    <button type="submit" name="insert" class="btn btn-default">Insert</button>
-	<button type="reset" name="clear" class="btn btn-default">Clear</button>
+    <form action="" method="post">
+	<nav class="navbar navbar-light bg-light justify-content-between">
+  <a class="navbar-brand">Register</a>
+   <form class="form-inline">
+        <input   type="text" placeholder="Search" name="search">
+        <button type="submit" name="submit" class="btn btn-primary ">
+		 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+</svg>
+</button>
+</form>
+</nav>
+    </form> 
 
-  </form>
-</div>
-</div>
 <div class="col-lg-12">
  <table class="table table-bordered">
     <thead>
@@ -53,47 +37,43 @@ require "connection.php";
         <th>Birthday</th>
 		<th>Course</th>
 		<th>Email</th>
-		<th>Edit</th>
-		<th>Delete</th>
+		<th> Edit </th>
+		<th> Delete </th>
       </tr>
     </thead>
-    <tbody>
-      <?php
-	   $dis = mysqli_query($conn, "select * from students");
-	  while ($row = mysqli_fetch_array($dis))
-	  {
-		  echo "<tr>";
+
+<?php
+
+
+if (isset($_POST['submit'])) {
+    $searchValue = $_POST['search'];
+    $con = new mysqli("localhost", "root", "", "TeamKape");
+    if ($con->connect_error) {
+        echo "connection Failed: " . $con->connect_error;
+    } else {
+        $sql = "SELECT * FROM students WHERE studentnum  LIKE '%$searchValue%'";
+
+        $result = $con->query($sql);
+        while ($row = $result->fetch_assoc()) {
+			echo "<tr>";
 	  echo "<td>"; echo  $row["id"]; echo "</td>";
 	  echo "<td>"; echo  $row["studentnum"]; echo "</td>";
 	  echo "<td>"; echo  $row["fullname"]; echo "</td>";
 	  echo "<td>"; echo  $row["birthday"]; echo "</td>";
 	  echo "<td>"; echo  $row["course"]; echo "</td>";
 	  echo "<td>"; echo  $row["email"]; echo "</td>";
-	   echo "<td>";?> <a href="edit.php?id=<?php echo $row["id"]; ?>"><button type="button" class="btn btn-success">Edit</button></a> <?php echo "</td>";
-	   echo "<td>";?> <a href="delete.php?id=<?php echo $row["id"];?>"><button type="button" class="btn btn-danger">Delete</button></a> <?php echo "</td>";
-		  echo "</tr>";
-		  
-	  }
-	  ?>
-     
-    </tbody>
-  </table>
-</div>
+	    echo "<td>";?> <a href="edit.php?id=<?php echo $row["id"]; ?>"><button type="button" class="btn btn-success col-lg-10">Edit</button> </a><?php echo "</td>";
+	  echo "<td>"; ?> <a href="delete.php?id=<?php echo $row["id"];?>"><button type="button" class="btn btn-danger col-lg-10">  Delete</button></a> <?php echo "</td>";
+			echo "</tr>";
+        }
 
-<?php  
-	if (isset($_POST["insert"]))
-	{
-		mysqli_query($conn,"insert into students values(NULL, '$_POST[studentnum]', '$_POST[fullname]', 
-		'$_POST[birthday]','$_POST[course]','$_POST[email]')");
-		?>
-		<script type="text/javascript">
-		window.location.href=window.location.href;
-		</script>
-		<?php
-	}
+      
+    }   
+}
 
-	
 ?>
-
-</body>
+</tbody>
+  </table>
+  </div>
+  </body>
 </html>
